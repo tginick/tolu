@@ -1,0 +1,60 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.71'
+}
+
+apply plugin: "java"
+apply plugin: "antlr"
+apply plugin: "application"
+
+group 'net.nicholasgwong'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+
+ext {
+    slf4jVersion = '1.7.25'
+    antlrVersion = '4.7.1'
+
+}
+
+application {
+    mainClassName = "net.nicholasgwong.tolu.compiler.ToluC"
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5'
+
+    antlr "org.antlr:antlr4:$antlrVersion"
+
+    implementation "net.nicholasgwong:misc-kt:1.0-SNAPSHOT"
+
+    implementation "org.antlr:antlr4-runtime:$antlrVersion"
+
+    //compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    //compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutineVersion"
+
+    implementation "commons-cli:commons-cli:1.4"
+    implementation "org.slf4j:slf4j-api:$slf4jVersion"
+}
+
+generateGrammarSource {
+    maxHeapSize = "128m"
+    arguments += ['-package', 'net.nicholasgwong.tolu.compiler.gen', '-Xexact-output-dir', '-visitor']
+    outputDirectory = new File("${project.buildDir}/generated-src/antlr/main/net/nicholasgwong/tolu/compiler/gen/")
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+compileKotlin.dependsOn generateGrammarSource
+
+sourceSets.main.java.srcDirs = [ "src/main/kotlin", "src/main/java", "build/generated-src/antlr/main" ]
