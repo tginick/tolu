@@ -2,7 +2,7 @@
 A scripting language and VM built on the JVM
 
 ## Name
-Lua in Portuguese means "moon," but in Polynesian languages, it means "two." Tolu simply means "three" in those languages.
+In Portuguese, Lua means "moon," but in Polynesian languages, Lua means "two." Tolu simply means "three" in those languages.
 I was playing around with Lua before I had the weird urge to see how hard it'd be to create my own script language (spoiler alert: it's quite difficult)
 
 ## About
@@ -80,3 +80,4 @@ Implementation:
     21: GETL  1
     22: RETN  0
 ```
+Some instructions don't have operands (e.g. ADD or RETN) but since all instructions are encoded as 64-bit numbers right now for simplicity, those just show up as 0.
