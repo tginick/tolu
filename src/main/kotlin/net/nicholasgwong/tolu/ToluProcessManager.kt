@@ -10,6 +10,10 @@ import net.nicholasgwong.tolu.rt.impl.vm.ExtFn
 import java.util.*
 import java.util.concurrent.CountDownLatch
 
+sealed class ToluExecuteResult
+object ToluNoResult : ToluExecuteResult()
+class ToluSuccess(val result: Any): ToluExecuteResult()
+object ToluSuccessAsync : ToluExecuteResult()
 
 class ToluProcess(private val vmSubmitter: ToluVMSubmitter, private val procHandle: ToluVMHandle) {
     fun run(functionName: String): Any {
@@ -76,11 +80,24 @@ class ToluVMProcessManager(private val vm: ToluVM, private val vmSubmitter: Tolu
 
         val handle = vmSubmitter.create(cachedProgram)
 
-        val khuHandle = ToluProcess(vmSubmitter, handle)
+        val ToluHandle = ToluProcess(vmSubmitter, handle)
 
-        processes[newId] = khuHandle
+        processes[newId] = ToluHandle
 
         return newId
+    }
+
+    fun executeFunction(processId: String, functionName: String): Any {
+        val proc = processes[processId]
+        if (proc != null) {
+            ToluSuccess(proc.run(functionName))
+        }
+
+        return ToluNoResult
+    }
+
+    fun closeProcess(processId: String, force: Boolean): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun generateRandomId(maxLen: Int): String {
